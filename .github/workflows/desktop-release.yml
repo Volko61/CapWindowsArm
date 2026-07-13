@@ -42,7 +42,7 @@ on:
         required: true
 
 env:
-  CN_APPLICATION: cap/cap
+  CN_APPLICATION: volko/cap
   SENTRY_ORG: cap-s2
   SENTRY_PROJECT: cap-desktop
 
