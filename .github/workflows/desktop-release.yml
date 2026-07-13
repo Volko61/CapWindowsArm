@@ -302,10 +302,19 @@ jobs:
       - name: Build desktop binaries
         shell: bash
         run: |
+          SIDE_CAR_TARGET="${{ matrix.settings.target }}"
           if [[ "$RUNNER_OS" == "Linux" ]]; then
             export CARGO_PROFILE_RELEASE_DEBUG=0
           fi
-          ./scripts/build-desktop-binaries.sh ${{ matrix.settings.target }}
+          if [[ "$RUNNER_OS" == "Windows" && "${{ matrix.settings.target }}" == "aarch64-pc-windows-msvc" ]]; then
+            SIDE_CAR_TARGET="x86_64-pc-windows-msvc"
+          fi
+          ./scripts/build-desktop-binaries.sh "$SIDE_CAR_TARGET"
+          if [[ "$RUNNER_OS" == "Windows" && "$SIDE_CAR_TARGET" != "${{ matrix.settings.target }}" ]]; then
+            cp "apps/desktop/src-tauri/binaries/cap-muxer-$SIDE_CAR_TARGET.exe" "apps/desktop/src-tauri/binaries/cap-muxer-${{ matrix.settings.target }}.exe"
+            cp "apps/desktop/src-tauri/binaries/cap-cli-$SIDE_CAR_TARGET.exe" "apps/desktop/src-tauri/binaries/cap-cli-${{ matrix.settings.target }}.exe"
+            cp "apps/desktop/src-tauri/binaries/cap-exporter-$SIDE_CAR_TARGET.exe" "apps/desktop/src-tauri/binaries/cap-exporter-${{ matrix.settings.target }}.exe"
+          fi
 
       # The release profile uses fat LTO + full debuginfo, so the final link
       # peaks well above the 16GB stock Linux runner and gets OOM-killed
