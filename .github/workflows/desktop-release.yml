@@ -36,6 +36,10 @@ on:
         required: false
         type: string
         default: ""
+    secrets:
+      CN_API_KEY:
+        description: "The CrabNebula Cloud API Key"
+        required: true
 
 env:
   CN_APPLICATION: cap/cap
